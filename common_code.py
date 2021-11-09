@@ -1,17 +1,30 @@
 from qiskit import *
 from qiskit import IBMQ
+from pprint import pprint
 from qiskit.providers import backend, provider
+from qiskit.quantum_info import Statevector
 from qiskit.tools.monitor import job_monitor
+from qiskit.visualization import plot_bloch_multivector
 from qiskit.ignis.mitigation.measurement import (complete_meas_cal, CompleteMeasFitter)
 
-# pass in your cicuit to see what the current state vector is
-def print_state_vector(quantum_circuit):
+def print_bloch_spheres(quantum_circuit, title=""):
+    state = Statevector.from_instruction(quantum_circuit)
+    plot_bloch_multivector(state=state, title=title, reverse_bits=False)
+
+def simulated_state_vector(quantum_circuit):
     backend = Aer.get_backend('statevector_simulator')
     job = backend.run(quantum_circuit)
     result = job.result()
+
+    return result
+
+# pass in your cicuit to see what the current state vector is
+def print_state_vector(quantum_circuit):
+    state = Statevector.from_instruction(quantum_circuit)
+    print(state)
+    #result = simulated_state_vector(quantum_circuit)
     
-    print(result.get_statevector(quantum_circuit, decimals=3))
-    
+    #print(result.get_statevector(quantum_circuit, decimals=3))
 
 # runs the circuit on the qasm_simulator
 def simulated_execution(quantum_circuit, how_many_times_to_run_it):
